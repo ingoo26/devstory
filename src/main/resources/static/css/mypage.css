@@ -1,0 +1,170 @@
+.menu{
+    width :100%;
+    height : auto;
+    text-align: center;
+}
+.containe {
+    min-width: 700px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+input {
+    display: none;
+}
+.search {
+    display: block;
+}
+label{
+    display: inline-block;
+    padding: 15px 20px;
+    font-size : small;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+label:hover {
+    color: rgb(91, 91, 91);
+}
+
+input:checked + label{
+    color:rgb(206, 132, 35);
+    border-bottom: 3px solid black;
+}
+
+section{
+    display: none;
+    padding: 3px;
+    border-top: 1px solid black;
+}
+
+#menu1:checked ~ #content1,
+#menu2:checked ~ #content2,
+#menu3:checked ~ #content3,
+#menu4:checked ~ #content4,
+#menu5:checked ~ #content5
+{
+    display: block;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: clamp(11rem, calc(11rem + 2vw), 22rem);
+    overflow: hidden;
+    box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 1em;
+    background: #ECE9E6;
+    background: linear-gradient(to right, #FFFFFF, #ECE9E6);
+}
+.card-body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    height: 103px;
+}
+.card-body p {
+    width:150px;
+}
+.card__image {
+    height: 100%;
+}
+.card__image_box {
+    height: 180px;
+    overflow: hidden
+}
+.card-text {
+    font-size: 11px;
+}
+#content1 {
+    max-width: 800px;
+    min-width: 600px;
+    padding-left: 30px;
+}
+.profile_box {
+    height: 200px;
+}
+.profile_name {
+    width: 400px;
+    height: 100px;
+    margin-left: 180px;
+}
+.profile_name  h3 {
+    line-height: 50px;
+}
+.follow {
+    background: none;
+    border: 1px solid #65bf97;
+    padding: 10px 30px;
+    border-radius: 20px;
+    color: #65bf97;
+    cursor: pointer;
+    float: right;
+}
+
+.follow {
+    transition-property: background-color;
+    transition-duration: .3s;
+}
+
+.follow:focus,
+.follow:hover {
+    color: white;
+    background-color: #4ad395;
+}
+.profile_img {
+    width: 100px; /* 프로필 이미지의 크기를 조절 */
+    height: 100px; /* 프로필 이미지의 크기를 조절 */
+    border-radius: 100%;
+    float: left;
+}
+.user_name {
+    font-size:25px;
+    font-weight: 500;
+    width: 200px;
+    height: 200px;
+    line-height: 100px;
+    float: left;
+}
+.edit_btn {
+    width: 100px;
+    height: 50px;
+    border: 1px solid #4ad395;
+    color:#4ad395;
+    background-color: transparent;
+    margin: 0 auto;
+    border-radius: 1rem;
+}
+.col-sm-6 * {
+    margin-bottom: 30px;
+}
+.profileimglabel {
+    padding: 0;
+}
+.edit-group {
+    padding-left: 70px;
+}
+.edit_btn {
+    float: left;
+    margin-right: 40px;
+}
+.delete {
+    display: block;
+    width: 100px;
+    height: 50px;
+    font-weight: 300;
+    line-height: 50px;
+    font-size: 18px
+}
+
+.edit_btn {
+    transition-property: background-color;
+    transition-duration: .3s;
+}
+
+.edit_btn:focus,
+.edit_btn:hover {
+    color: white;
+    background-color: #4ad395;
+    text-decoration-line: none;
+}

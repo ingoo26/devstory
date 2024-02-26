@@ -1,0 +1,48 @@
+<link href="/css/card.css" type="text/css" rel="stylesheet">
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="mainFragment">
+    <div class="container">
+        <div class="card" th:each="posts : ${postsList}">
+            <a class="card__header" th:href="@{|/detail/${posts?.id}|}">
+                <img th:src=" @{/thumbnail/{postimg}(postimg=${posts?.postimg})}" alt="card__image" class="card__image" width="600">
+            </a>
+            <div class="card__body">
+                <h4 th:text="${posts?.title}"></h4>
+                <p id="content" class="content" th:text="${posts?.content}"></p>
+            </div>
+            <div class="card__footer">
+                <div class="user">
+                    <img th:src="@{/profile/{profileimg}(profileimg=${posts?.user?.profileimg})}" alt="user__image" class="user__image">
+                    <div class="user__info">
+                        <a th:text="${posts?.user?.name}" th:href="@{|/user/mypage/${posts?.user?.id}|}"></a>
+                        <small th:text="${#temporals.format(posts?.dates, 'yyyy-MM-dd')}"></small>
+                    </div>
+                </div>
+                <p class="comment_count"
+                   th:if="${#lists.size(posts?.commentsList) > 0}"
+                   th:text="|${#lists.size(posts?.commentsList)}개의 댓글|"></p>
+            </div>
+        </div>
+    </div>
+    <div class="list_box">
+        <th:block th:if="${url == '/main'}" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <a th:if="${page != nowPage}" th:href="@{/main(page = ${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
+            <strong  th:if="${page == nowPage}" th:text="${page}"></strong>
+            <!--현 페이지와 누르려는 페이지 같으면 href 작동 안해도 되게끔 if문-->
+        </th:block>
+        <th:block th:if="${url == '/main/follower'}" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <a th:if="${page != nowPage}" th:href="@{/main/follower(page = ${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
+            <strong  th:if="${page == nowPage}" th:text="${page}"></strong>
+            <!--현 페이지와 누르려는 페이지 같으면 href 작동 안해도 되게끔 if문-->
+        </th:block>
+        <th:block th:if="${url == '/main/trending'}" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <a th:if="${page != nowPage}" th:href="@{/main/trending(page = ${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
+            <strong  th:if="${page == nowPage}" th:text="${page}"></strong>
+            <!--현 페이지와 누르려는 페이지 같으면 href 작동 안해도 되게끔 if문-->
+        </th:block>
+        <!--th:block의 경우 굳이 tag로 감쌀필요 없는 태그를 th문법을 사용해 나타낼때 사용-->
+    </div>
+</div>
+    <script src="/js/main.js"></script>
+</th:block>
+</html>

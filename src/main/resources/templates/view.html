@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상세 페이지</title>
+
+    <style>
+        #container { font-family: arial; font-size: 22px; margin: 25px; display: flex; justify-content: center; align-items: center; }
+        #editorContent { height: 50px; }
+        img { max-width: 350px; }
+    </style>
+</head>
+<body>
+<h2 style="text-align: center;" id="title"></h2>
+
+<div id="container">
+    <!--/* 에디터 콘텐츠 렌더링 영역 */-->
+    <div id="editorContent">
+
+    </div>
+</div>
+<div class="my-3">
+    <a th:href="@{|/post/modify/${posts.id}|}" class="btn btn-sm btn-outline-secondary"></a>
+</div>
+<!--sec:authorize="isAuthenticated()"-->
+<!--th:if="${posts.user.name != null and #authentication.getPrincipal().getName() == posts.user.name}"-->
+<!--th:text="수정"-->
+<script>
+
+    window.onload = async () => {
+        findPost();
+    }
+
+
+    // 게시글 상세정보 조회
+    async function findPost() {
+
+        // 1. URL 쿼리 스트링에서 게시글 번호 조회
+        const searchParams = new URLSearchParams(location.search);
+        console.log(searchParams);
+        const postId = Number(searchParams.get('id'));
+
+        // 2. API 호출
+        const url = `/api/posts/${postId}`;
+        const response = await fetch(url);
+        const post = await response.json();
+        // console.log(post);
+
+        // 3. 에디터 콘텐츠 렌더링
+        document.querySelector('#editorContent').innerHTML = post.content;
+        document.querySelector('#title').innerHTML = post.title;
+    }
+
+</script>
+</body>
+</html>

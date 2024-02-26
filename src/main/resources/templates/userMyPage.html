@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="/head :: headFragment"></th:block>
+<th:block th:replace="/header :: headerFragment2"></th:block>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mypage.css">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="containe mt-5">
+
+    <div class="row justify-content-start">
+        <div class="profile_box">
+            <img th:src=" @{/profile/{profileimg}(profileimg=${user?.profileimg})}"  class="profile_img" >
+            <p align=center class="user_name" th:text="${user?.name}"></p>
+            <div th:if="${user.id != loginUser.id}">
+                <button class="follow" th:onclick="|addFollow.modifyFollow(${user.id})|" th:if="${follow?.id == null}">팔로우</button>
+                <button class="follow" th:onclick="|addFollow.modifyFollow(${user.id})|" th:if="${follow?.id != null}">언팔로우</button>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-2" align=center th:text="'Following : ' + ${countFollowing}">
+        </div>
+        <div class="col-2" align=center th:text="'Follower : ' + ${countFollower}">
+        </div>
+    </div>
+    <!-- 탭 메뉴 -->
+
+    <div class="menu mx-auto mt-5">
+
+        <input type="radio" id="menu1" name="tab" checked>
+        <label for="menu1">글</label>
+        <input type="radio" id="menu3" name="tab" checked>
+        <label for="menu3">소개</label>
+        <input type="radio" id="menu4" name="tab" checked>
+        <label for="menu4">좋아한 포스트</label>
+
+        <section id="content1">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col" th:each="post : ${postList}">
+                    <a class="card" th:href="@{|/detail/${post?.id}|}">
+                        <div class="card__image_box">
+                            <img th:src=" @{/thumbnail/{postimg}(postimg=${post.postimg})}" alt="card__image" class="card__image" width="600">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${post?.title}"></h5>
+                            <p class="card-text content" th:text="${post?.content}"></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section id="content3">
+            <h3 th:text="${user.intro}" style="margin-top:30px;"></h3>
+        </section>
+        <section id="content4">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col" th:each="like : ${likeList}">
+                    <a class="card" th:href="@{|/detail/${like?.post.id}|}">
+                        <div class="card__image_box">
+                            <img th:src="@{/thumbnail/{profileimg}(profileimg=${like?.post.postimg})}" alt="card__image" class="card__image" width="600">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${like?.post.title}"></h5>
+                            <p class="card-text content" th:text="${like?.post.content}"></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+<script src="/js/mypage.js"></script>
+<script>
+    const followbtn = document.querySelector(".follow")
+
+    let addFollow = {
+        modifyFollow: function (userId) {
+            let param = {
+                userId: userId
+            };
+            $.ajax({
+                type: "PUT",
+                url: "/follow",
+                data: param,
+                success: function(flag) {
+                    $('.follow').load(location.href+' .follow');
+                },
+            })
+        },
+    }
+
+    followbtn.addEventListener("click", () => {
+        if (followbtn.innerText == "팔로우") {
+            followbtn.innerText = "언팔로우"
+        } else {
+            followbtn.innerText = "팔로우"
+        }
+    })
+</script>
+</html>
+<style>
+    .profile_box {
+        width: 100%;
+        height: 150px;
+        float: right;
+    }
+    .profileimglabel{
+        width: 100px;
+        height: 100px;
+
+        border-radius: 100%;
+        display: inline-block;
+        text-align: center;
+        line-height: 100px; /* 수직 가운데 정렬을 위해 */
+        cursor: pointer;
+
+    }
+
+
+    .profileimglabel:hover .profile_img {
+        background:#4ad395;
+        color: #fff;
+    }
+
+
+
+</style>

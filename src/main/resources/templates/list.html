@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>리스트 페이지</title>
+
+    <style>
+        table { width: 800px; font-size: 14px; margin: auto; }
+        table, td, th { border: 1px solid black; border-collapse: collapse; text-align: center; }
+        td.left { text-align: left; }
+    </style>
+</head>
+<body>
+<h2 style="text-align: center;">TOAST UI Editor 리스트 페이지</h2>
+
+<table>
+    <colgroup>
+        <col style="width: 20%;" />
+        <col style="width: 80%;" />
+    </colgroup>
+    <thead>
+    <tr>
+        <th scope="col">번호</th>
+        <th scope="col">제목</th>
+    </tr>
+    </thead>
+
+    <!--/* 리스트 데이터 렌더링 영역 */-->
+    <tbody id="posts">
+
+    </tbody>
+</table>
+
+<script>
+
+    window.onload = async () => {
+        findAllPost();
+    }
+
+
+    // 전체 게시글 조회
+    async function findAllPost() {
+
+        // 1. API 호출
+        const url = '/api/posts';
+        const response = await fetch(url);
+        const list = await response.json();
+
+        // 2. 데이터가 없는 경우, 로직 종료
+        if (list.length < 1) {
+            document.querySelector('#posts').innerHTML = '<tr><td colspan="2">검색된 결과가 없습니다.</td></tr>';
+            return false;
+        }
+
+        // 3. 리스트 HTML 세팅
+        let html = '';
+        list.forEach((item, index) => {
+            html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td class="left"><a href="/post/view.html?id=${item.id}">${item.title}</a></td>
+                    </tr>
+                `;
+        });
+
+        // 4. 리스트 HTML 렌더링
+        document.querySelector('#posts').innerHTML = html;
+    }
+
+</script>
+</body>
+</html>

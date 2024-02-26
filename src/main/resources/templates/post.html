@@ -1,0 +1,98 @@
+<link href="/css/post.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  xmlns:sec="http://www.w3.org/1999/xhtml">
+<th:block th:replace="/head :: headFragment"></th:block>
+<th:block th:replace="/header :: headerFragment2"></th:block>
+<div class="containers">
+    <div class="title_box">
+        <h1 class="title" th:text="${post.title}">
+        </h1>
+        <div class="author_box">
+            <a th:href="@{|/user/mypage/${post.user?.id}|}">
+                <p class="author" th:text="${post.user.blogname}"></p>
+            </a>
+            <p class="create_date" th:text="${#temporals.format(post.dates, 'yyyy-MM-dd')}"></p>
+        </div>
+        <div class="tag_box">
+            <div sec:authorize="isAuthenticated()" th:if="${post.user.name != null and #authentication.getPrincipal().getUsername() != post.user.name}">
+                <button class="follow" th:onclick="|addFollow.modifyFollow(${post.user.id})|"  th:if="${follow?.id == null}">팔로우</button>
+                <button class="follow" th:onclick="|addFollow.modifyFollow(${post.user.id})|"  th:if="${follow?.id != null}">언팔로우</button>
+            </div>
+        </div>
+    </div>
+    <div class="like_box">
+        <div class="container like_button" th:onclick="|addPostLike.modifyPostLike(${post.id})|">
+            <div class="icon-wrapper-2 anim" style="pointer-events: none" th:if="${like?.id != null}">
+                <span class="icon"><i class="fa fa-thumbs-up"></i></span>
+                <div class="spark">
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+            <div class="icon-wrapper-2" th:if="${like?.id == null}">
+                <span class="icon"><i class="fa fa-thumbs-up"></i></span>
+            </div>
+            <p class="like_count" th:text="${countLike}"></p>
+        </div>
+    </div>
+    <div class="content_box">
+        <div class="content" th:utext="${post.content}">
+
+        </div>
+        <div class="profile_box" >
+            <a th:href="@{|/user/mypage/${post.user?.id}|}">
+                <img th:src=" @{/profile/{profileimg}(profileimg=${post.user?.profileimg})}"  class="profile_img" >
+            </a>
+            <div class="profile_name">
+                <a th:href="@{|/user/mypage/${post.user?.id}|}">
+                    <h3 th:text="${post.user.blogname}"></h3>
+                    <p th:text="${post.user.intro}"></p>
+                </a>
+            </div>
+
+        </div>
+        <a th:href="@{|/post/delete/${post.id}|}"
+           class="btn btn-outline-secondary" style="float:right; margin-left:10px;"
+           sec:authorize="isAuthenticated()"
+           th:if="${post.user.name != null and #authentication.getPrincipal().getUsername() == post.user.name}">삭제</a>
+
+        <a th:href="@{|/post/edit/${post.id}|}"
+           class="btn btn-outline-secondary" style="float:right;"
+           sec:authorize="isAuthenticated()"
+           th:if="${post.user.name != null and #authentication.getPrincipal().getUsername() == post.user.name}">수정</a>
+
+
+    </div>
+    <div class="comment_form_box">
+        <form class="comment" id="comment_form" method="post" th:action="@{/comments/create/{id}(id=${post.id})}">
+            <p class="comment_counts" th:text="|${#lists.size(post.commentsList)}개의 댓글이 있습니다.|"></p>
+            <textarea class="comment_form" id="comment_text" name="content" placeholder="댓글을 작성하세요"></textarea>
+            <input type="submit" id="comment_submit" class="comment_submit" value="댓글 작성" sec:autorize="isAuthenticated()" th:if="${#authentication.getPrincipal() != 'anonymousUser'}">
+        </form>
+    </div>
+    <div class="comment_box" th:each="comments : ${post.commentsList}" >
+        <a th:href="@{|/user/mypage/${comments.user?.id}|}">
+            <img th:src=" @{/profile/{profileimg}(profileimg=${comments.user?.profileimg})}" class="profile_img" >
+        </a>
+        <a th:href="@{|/comments/delete/${comments.id}|}"
+           class="btn btn-outline-secondary" style="float:right; margin-left:10px;"
+           sec:authorize="isAuthenticated()"
+           th:if="${comments.user.name != null and #authentication.getPrincipal().getUsername() == comments.user.name}">삭제</a>
+        <div class="comment_author">
+            <a th:href="@{|/user/mypage/${comments.user?.id}|}">
+                <h4 th:text="${comments.user?.blogname}" th:href="@{|/user/mypage/${comments.user?.id}|}"></h4>
+            </a>
+
+            <p class="comment_create_date" th:text="${#temporals.format(comments.dates, 'yyyy-MM-dd HH:mm')}"></p>
+        </div>
+        <p class="comment" th:text="${comments.content}"></p>
+    </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/js/post.js" th:inline="javascript"></script>
+</html>

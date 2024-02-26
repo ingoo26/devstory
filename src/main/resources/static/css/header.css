@@ -1,0 +1,85 @@
+a {
+    text-decoration: none;
+    color: black;
+    font-size: large;
+    font-weight: bold;
+    cursor: pointer;
+
+}
+
+a:focus,
+a:hover {
+    outline: none;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.category {
+    width: 80px;
+    padding-block: 5px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+a:active {
+    text-decoration: underline; /* 선택된 링크에 밑줄 추가 */
+    font-weight: bolder; /* 선택된 링크를 굵게 표시 (옵션) */
+}
+
+
+
+.search {
+    position: relative;
+    width: 300px;
+}
+
+input {
+    width: 100%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.search_icon {
+    position : absolute;
+    width: 17px;
+    top: 10px;
+    right: 12px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.user_button{
+    border: #bbb;
+
+}
+
+.user_select {
+    border: none;
+    width: 100%;
+
+}
+
+.dropdown-menu {
+    margin-top: 10px;
+}
+
+.main_logo {
+    position: relative;
+
+}
+
+nav {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+}
+img {
+    height: 50px;
+}
+.search_icon {
+    height: 18px;
+    width: 19px;
+}

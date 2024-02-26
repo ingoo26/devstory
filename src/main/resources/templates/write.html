@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>글쓰기 페이지</title>
+    <!-- include libraries(jQuery, bootstrap) -->
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+
+    <!-- TUI 에디터 CSS CDN -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+
+    <!-- 버튼 영역 CSS -->
+    <style>
+        #btnDiv { text-align: center; margin-top: 20px; }
+        .btns { display: inline-block; padding: 0 10px; height: 28px; line-height: 26px; text-align: center; vertical-align: middle; border-radius: 3px; border: 1px solid transparent; font-weight: 500; }
+        .btns.save { background: #139dc8; color: #fff; cursor: pointer; }
+        .btns.back { background: #fff; border: 1px solid #199bc4; color: #199bc4; }
+    </style>
+
+</head>
+<body>
+<div class="container">
+
+
+    <h2 class="second" style="margin-bottom: 30px; text-align: center;"> <span>글 작성하기</span></h2>
+    <div class="cnt-title">
+        <label for="title">제목</label>
+        <input type="text" placeholder=" 제목을 작성해주세요." class="box-control" id="title" style="resize:none" ></input><br>
+    </div>
+
+    <div class="tuumnail">
+        <span>썸네일 이미지 : </span><input type="file" name="file" id="fileInput" />
+    </div>
+
+
+
+
+    <!-- 에디터를 적용할 요소 (컨테이너) -->
+    <div id="content" class="tag-control">
+
+    </div>
+
+    <div id="btnDiv">
+        <button type="button" class="btns save" onclick="savePost();">저장하기</button>
+        <a href="/main" class="btns back">뒤로 가기</a>
+    </div>
+</div>
+
+<!-- TUI 에디터 JS CDN -->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+    const editor = new toastui.Editor({
+        el: document.querySelector('#content'),      // 에디터를 적용할 요소 (컨테이너)
+        height: '500px',                             // 에디터 영역의 높이 값 (OOOpx || auto)
+        initialEditType: 'markdown',                 // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+        initialValue: '',                            // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+        previewStyle: 'vertical',                    // 마크다운 프리뷰 스타일 (tab || vertical)
+        placeholder: '내용을 입력해 주세요.',
+        /* start of hooks */
+        hooks: {
+            async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
+                try {
+                    /*
+                     * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
+                     *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
+                     */
+                    const formData = new FormData();
+                    formData.append('image', blob);
+
+                    // 2. FileApiController - uploadEditorImage 메서드 호출
+                    const response = await fetch('/tui-editor/image-upload', {
+                        method : 'POST',
+                        body : formData,
+
+                    });
+
+                    // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
+                    const filename = await response.text();
+                    console.log('서버에 저장된 파일명 : ', filename);
+
+                    // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
+                    const imageUrl = `/tui-editor/image-print?filename=${filename}`;
+                    callback(imageUrl, 'image alt attribute');
+
+                } catch (error) {
+                    console.error('업로드 실패 : ', error);
+                }
+            }
+        }
+        /* end of hooks */
+    });
+
+
+    // 게시글 저장
+    async function savePost() {
+        // 1. 콘텐츠 입력 유효성 검사
+
+        if (editor.getMarkdown().length < 1) {
+            alert('내용을 입력해 주세요.');
+            throw new Error('editor content is required!');
+        }
+        const url = '/post/write';
+        const title = document.getElementById('title').value;
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            postimg = "logo.png";
+        }if(file){
+            postimg=fileName;
+        }
+
+
+        const params = {
+            title: title,
+            content: editor.getHTML(),
+            postimg:postimg
+        }
+        console.log(params);
+
+
+        if (title.length<1) {
+            alert('제목 입력은 필수입니다.');
+            throw new Error('editor content is required!');
+        }
+
+
+        // 3. API 호출
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params),
+            });
+            console.log(response.body);
+            const postId = await response.json();
+            alert("게시글이 저장되었습니다");
+            window.location.href = "http://localhost:8080/main";
+
+        } catch (error) {
+            console.error('저장 실패 : ', error)
+        }
+
+    }
+    document.getElementById('fileInput').addEventListener('change', async function() {
+        try {
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append('image',file);
+
+            // 2. FileApiController - uploadEditorImage 메서드 호출
+            const response = await fetch('/tui-editor/upload_ok', {
+                method: 'POST',
+                body: formData,
+            });
+            savename = await response.text();
+            fileName = savename.split('\\').pop();
+            alert('이미지 업로드 완료' );
+
+
+
+
+        } catch (error) {
+            console.error('업로드 실패 : ', error);
+        }
+    });
+
+</script>
+</body>
+</html>
+<style>
+    .tuumnail{
+        padding-top : 10px;
+    }
+
+
+    .container {
+        background: #f9fdfe;
+        border-radius: 40px;
+        width: 900px;
+        margin-top: 30px;
+    }
+
+
+    textarea {
+        font-family:fantasy;
+    }
+
+
+     .container {
+         background: #f9fdfe;
+         border-radius: 40px;
+         width: 900px;
+         margin-top: 30px;
+         margin-left: auto;
+         margin-right: auto;
+         padding: 20px;
+     }
+
+    label {
+        font-family: "Open Sans Condensed", sans-serif;
+    }
+
+    h2.second {
+        font-weight: 150;
+    }
+
+    h2.second span {
+        position: relative;
+        display: inline-block;
+        padding: 5px 10px ;
+        border-radius: 10px;
+        border-bottom: 1px solid mediumseagreen;
+        width: 700px;
+        height: 100%;
+    }
+
+    h2.second span:after {
+        content: '';
+        position: absolute;
+        bottom: calc(-100% - 1px);
+        margin-left: -10px;
+        display: block;
+        width: 700px;
+        height: 100%;
+        border-radius: 10px;
+        border-top: 1px solid mediumseagreen;
+    }
+
+
+    .box-control {
+        display: block;
+        width: 520px;
+        height: 50px;
+        /* padding: 11px 12px; */
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 2;
+        color: #555;
+        background-color: #ffffff;
+        background-image: none;
+        border: 3px solid #b7d3fff9;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+
+
+    #btnDiv {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btns {
+        display: inline-block;
+        padding: 0 10px;
+        height: 28px;
+        line-height: 26px;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 3px;
+        font-weight: 500;
+    }
+
+    .btns.save {
+        background: #139dc8;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .btns.back {
+        background: #fff;
+        border: 1px solid #199bc4;
+        color: #199bc4;
+    }
+
+
+
+
+
+</style>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <!-- 아이콘 -->
+    <script src="https://kit.fontawesome.com/24bec1fae1.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
+</head>
+<th:block th:fragment="headerFragment">
+
+<body>
+<th:block th:fragment="headerFragment2">
+    <header >
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+              <a class="navbar-brand " href="#">
+                  <img class="main_logo" src="/img/logo.png" alt="메인로고" width="200" height="100" onclick="location.href='/main'">
+              </a>
+              <div>
+                <ul id="navbar" class="navbar-nav justify-content-end align-items-center flex-grow-1 p-3">
+                    <li>
+                        <button class="btn btn-outline-secondary me-3" style="border-radius: 1rem;" sec:authorize="isAnonymous()" onclick="location.href='/user/signup'">로그인</button>
+                        <button class="btn btn-outline-secondary me-3" style="border-radius: 1rem;" sec:authorize="isAuthenticated()    "  onclick="location.href='/user/logout'">로그아웃</button>
+                        <button class="btn btn-outline-secondary me-3"  style="border-radius: 1rem;" sec:authorize="hasRole('ROLE_ADMIN')" onclick="location.href='/admin'">관리자
+                        </button>
+                        <button class="btn btn-outline-secondary me-3" style="border-radius: 1rem;" sec:authorize="isAuthenticated()"  onclick="location.href='http://localhost:8080/post/write'">새 글 작성</button>
+                    </li>
+                    <!-- 로그인한 유저 해당 버튼 보이게 설정할 것 -->
+                    <li>
+                        <button class="btn btn-outline-secondary me-3 user_button" id="userButton" sec:authorize="isAuthenticated()" onclick="location.href='/user/mypage'">
+                            <i class="fa-regular fa-user"></i>
+<!--                            <i class="fa-solid fa-chevron-down"></i>-->
+                        </button>
+<!--                        <div class="dropdown-menu" id="dropdownMenu">-->
+<!--                            <select class="user_select">-->
+<!--                                <option value="myblog">내 블로그</option>-->
+<!--&lt;!&ndash;                                 th:href="@{user/logout}" ><option value="logout">로그아웃</option>&ndash;&gt;-->
+<!--                                <option value="setting">설정</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+                    </li>
+
+                    <form th:action="@{/main}" method="get" class="search">
+                        <input type="text" name="searchKeyword" placeholder="검색어 입력" class="search">
+                        <img class="search_icon" src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png">
+                    </form>
+                  </ul>
+              </div>
+            </div>
+          </nav>
+    </header >
+</th:block>
+
+    <!-- 글 상세보기 했을 때는 미적용할 부분 -->
+    <div class="hometap_wrapper p-3" >
+        <div class="row">
+            <div class="col-md-6 hometap_left">
+              <!--페이지 정렬-->
+                <div class="hometap_tap">
+                    <a class="# me-2" href="/main/trending"><i class="fa-solid fa-arrow-trend-up me-2"></i><span>트렌드</span></a>
+                    <a class="# me-2" href="/main"><i class="fa-regular fa-clock me-2"></i><span>최신</span></a>
+                    <a class="#" href="/main/follower"><i class="fa-solid fa-rss me-2"></i><span>팔로우</span></a>
+                </div>
+            </div>
+
+            <div class="col-md-6 hometap_right text-end">
+                <div class="hometap_selector">
+<!--                    <select class="category">-->
+<!--                        <option value="today">오늘</option>-->
+<!--                        <option value="thisweek">이번주</option>-->
+<!--                        <option value="thismonth">이번달</option>-->
+<!--                        <option value="thisyear">올해</option>-->
+<!--                    </select>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--    <script>-->
+<!--        document.getElementById('userButton').addEventListener('click', function () {-->
+<!--            var dropdownMenu = document.getElementById('dropdownMenu');-->
+<!--            if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {-->
+<!--                dropdownMenu.style.display = 'block';-->
+<!--            }else {-->
+<!--                dropdownMenu.style.display = 'none';-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
+</body>
+</th:block>
+</html>
+
+<style scoped>
+    a {
+        text-decoration: none;
+        color: black;
+        font-size: large;
+        font-weight: bold;
+        cursor: pointer;
+
+    }
+
+    a:focus,
+    a:hover {
+        outline: none;
+        background-color: transparent;
+        text-decoration: underline;
+    }
+
+    .category {
+       width: 80px;
+       padding-block: 5px;
+       border: 1px solid #bbb;
+       border-radius: 8px;
+       margin-right: 12px; 
+       text-align: center;
+    }
+
+    a:active {
+    text-decoration: underline; /* 선택된 링크에 밑줄 추가 */
+    font-weight: bolder; /* 선택된 링크를 굵게 표시 (옵션) */
+    }
+
+
+
+    .search {
+  position: relative;
+  width: 300px;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.search_icon {
+  position : absolute;
+  width: 17px;
+  top: 10px;
+  right: 12px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.user_button{
+    border: #bbb;
+    
+}
+
+.user_select {
+    border: none;
+    width: 100%;
+    
+}
+
+.dropdown-menu {
+    margin-top: 10px;
+}
+
+.main_logo {
+    position: relative;
+
+}
+
+nav {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+}
+</style>
